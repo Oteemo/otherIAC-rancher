@@ -14,7 +14,7 @@ resource "aws_route53_record" "istio_alias" {
   allow_overwrite = true          #New attribute after 1.5.0
 	alias { 
 		name        = data.aws_lb.existing_lb.dns_name     # Istio load balancer's DNS name or endpoint 
-    zone_id     = var.zone_id
+		zone_id     = var.zone_id
 		evaluate_target_health = false                     # Set to true if you want Route 53 to evaluate target health 
 		} 
 }

@@ -8,7 +8,7 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = false
 
   tags = {
-    Name = "LTS load balancer"
+    Name = "Customer load balancer"
   }
  lifecycle {
  ignore_changes = [
@@ -18,6 +18,7 @@ resource "aws_lb" "alb" {
 
 }
 
+# group for HTTP
 resource "aws_lb_listener" "front_end_http" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 80
@@ -28,21 +29,9 @@ resource "aws_lb_listener" "front_end_http" {
     target_group_arn = aws_lb_target_group.front_end_http.arn
   }
 
-  /*
-  Removal of redirect, in case apps use default port
-  default_action {
-    type = "redirect"
-    target_group_arn = aws_lb_target_group.front_end_http.arn
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-  */
 }
 
+# group for HTTPS
 resource "aws_lb_listener" "front_end_https" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 443

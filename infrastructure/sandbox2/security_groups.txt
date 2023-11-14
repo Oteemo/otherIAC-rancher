@@ -1,0 +1,110 @@
+
+
+# Sandbox Security Group
+resource "aws_security_group" "sandbox_sg" {
+  name        = "allow_vpn_ingress_to_rke-${random_integer.random_resource.result}"
+  description = "Allow inbound traffic from vpn to rke instances"
+  vpc_id      =  var.vpc_id
+
+  ingress {
+    description = "SSH inbound from VPN"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["10.1.79.0/24"] 
+    
+  }
+  
+    ingress {
+    description = "HTTPS inbound from VPN and for K8S"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.1.79.0/24", "10.140.210.0/26","10.140.210.64/26"] 
+    
+  }
+
+  ingress {
+    description = "Req for K8S"
+    from_port   = 30000
+    to_port     = 30000
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+
+  ingress {
+    description = "Port 80 to VPC subnet"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+
+  ingress {
+    description = "Req for K8S"
+    from_port   = 9091
+    to_port     = 9091
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+  
+  ingress {
+    description = "Req for K8S"
+    from_port   = 2379
+    to_port     = 2379
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+  
+  ingress {
+    description = "The RKE2 server needs port 6443 and 9345 to be accessible by other nodes in the cluster."
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+
+  ingress {
+    description = "Req for K8S"
+    from_port   = 10010
+    to_port     = 10010
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+
+  ingress {
+    description = "ArgoCD port to ALB"
+    from_port   = 30446
+    to_port     = 30446
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.209.64/26","10.140.209.0/26"] 
+  }
+
+  ingress {
+    description = "RKE2 server and agent nodes""
+    from_port   = 8472
+    to_port     = 8472
+    protocol    = "udp"
+    idr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+
+  ingress {
+    description = "The RKE2 server needs port 6443 and 9345 to be accessible by other nodes in the cluster."
+    from_port   = 9345
+    to_port     = 9345
+    protocol    = "tcp"
+    cidr_blocks = ["10.140.210.64/26","10.140.210.0/26"] 
+  }
+
+  egress {
+    from_port        = 0 #in production make need to make sure we restrict to the only ports needed
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_vpn_ingress_to_rke"
+  }
+}

@@ -52,7 +52,7 @@ variable "ingress_ip" {
 variable "lb_name" {
   description = "Load balancer name"
   type        = string
-  default     = "alb-huit"
+  default     = "customer alb"
 }
 
 variable "listener_port" {
