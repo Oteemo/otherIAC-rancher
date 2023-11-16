@@ -3,11 +3,10 @@ otherIAC RKE Rancher
 
 This is a IAC repo for the RKE/Rancher install onto an AWS instance
 
-
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
-- [Step-by-Step Deployment Guide](...)
+  [Step-by-Step Deployment Guide](#step-by-step-deployment-guide)
 
 ## Prerequisites
 Before proceeding with the deployment of the RKE2 cluster, ensure you have the following prerequisites in place:

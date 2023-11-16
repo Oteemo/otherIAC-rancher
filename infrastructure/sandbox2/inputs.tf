@@ -15,6 +15,6 @@ data "aws_ami" "latest_patched_ami" {
   # filter on RHEL 8.x
   filter {
     name   = "name"
-    values = ["prod-rhel8.4*mvp*"]
+    values = ["prod-rhel8.4*mvp*"]        # Change: Modfy filter if not using RHEL Satellite
   }
 }
