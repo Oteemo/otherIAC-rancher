@@ -21,15 +21,13 @@ provider "aws" {
 
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "customer-terraform-state"
-
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = true          #prevention of S3 bucket being destroyed
   }
 }
 
 resource "aws_s3_bucket_versioning" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
-
   versioning_configuration {
     status = "Enabled"
   }
@@ -41,23 +39,22 @@ resource "aws_s3_bucket" "rancher_backup" {
 
 resource "aws_s3_bucket_versioning" "rancher_backup" {
   bucket = aws_s3_bucket.rancher_backup.id
-
   versioning_configuration {
     status = "Enabled"
   }
 }
 
-resource "aws_iam_policy" "s3_policy" {
+# Add S3 buckets to the IAM policy
+resource "aws_iam_policy" "s3_policy1" {
   name        = "S3PolicyForRKE2-${random_integer.random_resource.result}"
   description = "Allow RKE2 servers and agents to access S3 bucket"
-  policy      = templatefile("policies/s3_policy.json.tpl", { aws_s3_bucket = aws_s3_bucket.rancher_backup.id })
+  policy      = templatefile("policies/s3_policy.json.tpl", { aws_s3_bucket = aws_s3_bucket.terraform_state.id, aws_s3_bucket = aws_s3_bucket.rancher_backup.id })
 }
 
 resource "random_integer" "random_resource" {
   min = 1
   max = 999999
 }
-
 
 resource "aws_dynamodb_table" "terraform_state_lock" {
   name           = "customer-terraform-DynamoDb"
