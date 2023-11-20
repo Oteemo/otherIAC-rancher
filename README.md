@@ -19,6 +19,8 @@ Before proceeding with the deployment of the RKE2 cluster, ensure you have the f
 
 4  S3 Bucket Access: An S3 bucket is required to store RKE2 node tokens used when new nodes join the cluster. The S3 bucket should be in the same region where you will be deploying the AWS resources.
 
+5. You will also require VPC and subnets.  There should be configured by SecOps team
+
 ## Step-by-Step Deployment Guide
 
 To provision the infrastructure using this Terraform module, follow these steps:
