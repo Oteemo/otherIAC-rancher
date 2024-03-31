@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  oidc.config: |
+    name: HarvardKey
+    issuer: https://www.pin1.harvard.edu/cas/oidc
+    clientID: var.clientid
+    clientSecret: var.clientsecret
+  url: https://deployment.sand.lib.harvard.edu
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"accounts.tscorpa":"apiKey, login"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2023-07-28T17:35:21Z","labels":{"app.kubernetes.io/name":"argocd-cm","app.kubernetes.io/part-of":"argocd"},"name":"argocd-cm","namespace":"argocd","resourceVersion":"2119","uid":"e696fd21-dcea-4ad6-9e50-0cd8b0f6ed4c"}}
+  creationTimestamp: "2023-09-07T18:19:42Z"
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cm
+  namespace: argocd
+  resourceVersion: "19746591"
+  uid: e7eff3cd-667c-4241-9485-dab90b0887cc

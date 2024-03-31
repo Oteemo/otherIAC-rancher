@@ -1,0 +1,38 @@
+aapiVersion: v1
+data:
+  policy.csv: |2-
+     g, ext, role:extension
+     g, ext, role:curiosity
+     p, role:curiosity,applications, get, curiosity/* , allow
+     p, role:curiosity, extensions, invoke, cur*, allow
+     p, role:extension, applications, get, default/nrs*, allow
+     p, role:extension,extensions, invoke, nrs*, allow
+     p, role:hk-admin, applications, get, *, allow
+     p, role:hk-admin, applications, create, *, allow
+     p, role:hk-admin, applications, update, *, allow
+     g, anm5742, role:admin
+     g, brd833, role:admin
+     g, brh066, role:admin
+     g, jaj561, role:admin
+     g, jak852, role:admin
+     g, jic012, role:admin
+     g, mac0373, role:admin
+     g, mar1625, role:admin
+     g, rgd358, role:admin
+     g, saj513, role:admin
+     g, sbb471, role:admin
+     g, stc813, role:admin
+     g, tms424, role:admin
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"policy.csv":"g, tscorpa, role:admin\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2023-07-28T17:35:21Z","labels":{"app.kubernetes.io/name":"argocd-rbac-cm","app.kubernetes.io/part-of":"argocd"},"name":"argocd-rbac-cm","namespace":"argocd","resourceVersion":"2124","uid":"30ba496d-2c56-40d9-a432-f61bcf3cd4e8"}}
+  creationTimestamp: "2023-08-30T13:13:04Z"
+  labels:
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-rbac-cm
+  namespace: argocd
+  resourceVersion: "36158646"
+  uid: f3f78fce-6c83-4ad7-
