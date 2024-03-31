@@ -1,0 +1,60 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: NodePort
+            ports:
+              - port: 80
+                targetPort: 8080
+                name: http2
+                nodePort: 31380
+              - port: 443
+                nodePort: 32001
+                name: https
+      - name: istio-private-ingressgateway
+        label:
+          istio: istio-private-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: NodePort
+            ports:
+              - port: 80
+                targetPort: 8080
+                name: http2
+                nodePort: 31381
+              - port: 443
+                nodePort: 32002
+                name: https
+      - name: istio-server-ingressgateway
+        label:
+          istio: istio-server-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: NodePort
+            ports:
+              - port: 80
+                targetPort: 8080
+                name: http2
+                nodePort: 31382
+              - port: 443
+                nodePort: 32003
+                name: https
+  values:
+    gateways:
+      istio-ingressgateway:
+        runAsRoot: true
+        type: NodePort
+      # istio-private-ingressgateway:
+      #   runAsRoot: true
+      #   type: NodePort
+      # istio-server-ingressgateway:
+      #   runAsRoot: true
+      #   type: NodePort
+
