@@ -14,10 +14,11 @@ variable "ami_id" {
   default     = ""
 }
 
-variable "argocd_version" {
-  description = "argoCD version"
-  type        = string
-}
+# Cleanup argocd from user scripts
+#variable "argocd_version" {
+#  description = "argoCD version"
+#  type        = string
+#}
 
 variable "certmanager_version" {
   description = "certmanager version"
@@ -39,10 +40,11 @@ variable "environment_name" {
   type        = string
 }
 
-variable "eso_version" {
-  description = "Eternal Secrets Operator version"
-  type        = string
-}
+#Cleanup ESO version
+#variable "eso_version" {
+#  description = "Eternal Secrets Operator version"
+#  type        = string
+#}
 
 variable "instance_count" {
   description = "Number of RKE2 agent instances to create"
@@ -59,6 +61,16 @@ variable "istio_version" {
   type        = string
 }
 
+variable "group_id1" {
+  description = "Group id for mount points"
+  type        = string
+}
+
+variable "group_id2" {
+  description = "Group id for mount points"
+  type        = string
+}
+
 variable "hostname" {
   description = "hostname of the rancher ui"
   type        = string
@@ -69,11 +81,15 @@ variable "key_pair_name_prefix" {
   type        = string
 }
 
+variable "loadbalancer_subnets" {
+  description = "subnets per environment"
+  type = list
+}
+
 variable "loki_version" {
   description = "LOKI PLG stack version"
   type        = string
 }
-
 
 variable "node_agent_subnet_id" {
   description = "subnet id to deploy the server"
@@ -85,6 +101,12 @@ variable "rancher_backup_version" {
   description = "Rancher Backup version"
   type        = string
 }
+
+variable "rancher_monitoring_version" {
+  description = "Rancher Monitoring version"
+  type        = string
+}
+
 
 variable "rancher_password" {
   description = "Rancher password this is just placeholder for the password. The password will be called from teh module that created it so it is not exposed to the script"
@@ -113,9 +135,24 @@ variable "s3_bucket_name" {
   type        = string
 }
 
+variable "server_instance_count" {
+  description = "Number of RKE2 server instances to create"
+  type        = number
+}
+
+variable "server_instance_type" {
+  description = "EC2 instance type"
+  type        = string
+}
+
 variable "server_private_ip" {
   description = "ip address of the server"
   type        = string
+}
+
+variable "server_other_ips" {
+  description = "ip address of the server"
+  type        = list(string)
 }
 
 variable "server_subnet_id" {
@@ -138,18 +175,31 @@ variable "volume_size" {
   type        = number
 }
 
+variable "volume_type" {
+  description = "Type of the EBS volume in GB"
+  type        = string
+}
+
 variable "vpc_id" {
   description = "VPC id for or per environment"  
   type = string
 }
 
-variable "sandbox_subnets" {
-  description = "subnets per environment"  
+#variable "sandbox_subnets" {
+#  description = "subnets per environment"
+#  type = list
+#}
+
+# Rename sandbox_subnet to worker.  TODO :  Remove later
+variable "worker_subnets" {
+  description = "subnets per environment"
+  type = list
+}
+
+# Ansible Tower subnets for patching.
+variable "tower_subnets" {
+  description = "subnets for Ansible Tower"
   type = list
 }
 
 
-variable "loadbalancer_subnets" {
-  description = "subnets per environment"  
-  type = list
-}

@@ -6,17 +6,17 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 # Update SSM agent
 dnf install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
 
-# Register with Sat server
+### Register with Sat server
 katello_version=$(rpm -qa | grep katello-ca-consumer)
 rpm -e $katello_version
-#rpm -e katello-ca-consumer-rhsatprd02.cloudservices.huit.harvard.edu-1.0-100.noarch
+
 curl --insecure --output katello-ca-consumer-latest.noarch.rpm https://rhsatprd-master.huit.harvard.edu/pub/katello-ca-consumer-latest.noarch.rpm
 yum -y localinstall katello-ca-consumer-latest.noarch.rpm
 subscription-manager register --org="LTS" --activationkey="RHEL 8" --force
 subscription-manager refresh
 subscription-manager config --rhsm.manage_repos=1
 
-# Get updates, install nfs, install snmp, and apply
+### Get updates, install nfs, install snmp, and apply
 yum -y update
 yum -y install nfs-utils
 yum -y install net-snmp net-snmp-utils net-snmp-libs net-snmp-devel
@@ -24,10 +24,10 @@ yum -y install net-snmp net-snmp-utils net-snmp-libs net-snmp-devel
 # Adding pub key for patching
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1R48RInVL/ktexb2i5+1FwlyFyRMjhdAyJtcSYlpG/IX/7yakozJTVMrDiUg957s28ssw0ucdDGS1yTEm1qFKL44svLStodqUimZK/eTnFl74XRQQQJv4AAJsPcc11IDJNVR995T9hpHoDnqCaKl7SY1AYiScIf0M18VXZ7hmFDGp5NJ2BpDVFWaCb5B0dlHd7Lr2RUvvIBqLm4W9dx30r9pjbVcpSrcAiDnF5G8TywAfRjIgilHO/I0xqzwlmGsK2c4qNLOfmuniTB4yKWr2gENVOYwJAauEdQ3kuNTcTJwcEYORSuuSUPGQ3RXtIfFi15OGZs/8oWyTKEi0eRBwwcJEKz+TbgQHlkGOATF8L431c5MSR+NlbHRq50gLFQjDZAj6n2M0ZfmzsvJ9gNfxQnMDzp8zMaSFdVUnOacAL3cd11ZPZqJ8+PYp+qDLrpaZP2LgLnB1mFHHxDvUWDHlBeyI5FXQkhC87MdZNLIow6wUXz+4Y/ZF2OBiCyOMjeOWoRli+NGrs6Ds58A2fjZyV4a5/fMyIxpIEDROBlBlD6mStrvyHyEyGPDUJjqKhKPNXsotEWFHZdbeUfeq4jJ71eiWDgRM1evJD2pPq9QJcS8Bozq6N6dPBX8LgaP6HkwQt6pSMZdUOYDBVQ8aFmZdIlPBan5+lHzWkBXbn+botw==" > /opt/ansible_rw/.ssh/authorized_keys
 
-# Blanking HUIT account key. 
+# Blanking HUIT account key.
 echo "" > /opt/ansible_ro/.ssh/authorized_keys
 
-# Configure SNMP config
+### Configure SNMP config
 echo "rwcommunity  public
 syslocation  LTS-AWS-PROD
 syscontact lts-prodops@calists.harvard.edu
@@ -49,7 +49,7 @@ sudo echo "${efs_mount}:/ /docker nfs4  rw    0     0" >> /etc/fstab
 groupadd appcommon -g ${group_id1}
 groupadd appadmin -g ${group_id2}
 
-# Register with NESSUS server
+### Register with NESSUS server
 /sbin/service nessusagent stop
 
 FILE=/etc/tenable_tag
@@ -74,35 +74,35 @@ systemctl enable --now rke2-server.service
 ln -s $(find /var/lib/rancher/rke2/data/ -name kubectl) /usr/local/sbin/kubectl
 
 # Add kubectl conf
-export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
+export KUBECONFIG=/etc/rancher/rke2/rke2.yaml 
 
 # Save this for rancher2 and rancher3
 cat /var/lib/rancher/rke2/server/node-token
 
-#echo 'Waiting for cloud-init to complete...'
-## cloud-init status --wait > /dev/null
-
 sudo cat /var/lib/rancher/rke2/server/node-token > /tmp/node-token
 aws s3 cp --region us-east-1 /tmp/node-token s3://${s3_bucket_name}/node-token
-# Get public DNS
 
 # Wait for all nodes to be ready
 kubectl wait --for=condition=Ready nodes --all --timeout=6m
 
 ### Install helm and cert-manager
-sleep 20 #we need to run checks instead of sleep 
 curl -#L https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-sleep 20
+sleep 10
 helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
-sleep 20
+sleep 10
 helm repo add jetstack https://charts.jetstack.io
-sleep 20
-### Install Cert Manager - add certmanager_version
+sleep 10
+### New Cert Manager - add certmanager_version
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v${certmanager_version}/cert-manager.crds.yaml
-sleep 20
-helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace
+sleep 10
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version=v${certmanager_version}
+sleep 10
 
-# Install Rancher Backup Operator
+### Add HELM repos
+helm repo add argocd https://argoproj.github.io/argo-helm
+helm repo add istiod https://istio-release.storage.googleapis.com/charts
+
+###  Install Rancher Backup Operator
 helm repo add rancher-charts https://charts.rancher.io
 helm upgrade --install=true --version=${rancher_backup_version} rancher-backup-crd rancher-charts/rancher-backup-crd -n cattle-resources-system --create-namespace
 helm upgrade --install=true --version=${rancher_backup_version} rancher-backup rancher-charts/rancher-backup -n cattle-resources-system
@@ -111,8 +111,7 @@ helm upgrade --install=true --version=${rancher_backup_version} rancher-backup r
 helm upgrade --install=true --version=${rancher_monitoring_version} --wait=true --timeout=10m0s rancher-monitoring-crd rancher-charts/rancher-monitoring-crd -n cattle-monitoring-system --create-namespace
 helm upgrade --install=true --version=${rancher_monitoring_version} --wait=true --timeout=10m0s rancher-monitoring rancher-charts/rancher-monitoring -n cattle-monitoring-system
 
-# Get the bootstrap password from Secrets Manager
-# Install Rancher UI with the retrieved password (rancher_version)
+# Get the bootstrap password from Secrets Manager & install Rancher UI with the retrieved password (rancher_version)
 helm upgrade -i rancher rancher-latest/rancher --create-namespace --namespace cattle-system --version ${rancher_version} --set hostname=${hostname} --set bootstrapPassword="${rancher_password}" --set replicas=1
 
 # Create SSL Certificate Kubernetes Secrets
@@ -123,57 +122,21 @@ kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=/tmp/tls.c
 # Update Rancher with SSL Certificate
 helm upgrade -i rancher rancher-latest/rancher --create-namespace --namespace cattle-system --version ${rancher_version} --set hostname=${hostname} --set bootstrapPassword="${rancher_password}" --set ingress.tls.source=secret --set replicas=1
 
-####### make sure password are not written to the log file
-# Install ArgoCD
-helm repo add argo https://argoproj.github.io/argo-helm
-
+### Install ARGOCD
 kubectl create namespace argocd
-#kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/${argocd_version}/manifests/install.yaml
-#kubectl patch svc argocd-server -n argocd --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]' ##temp fix pending load balancer
-sleep 20
 
-#
-# TODO: Test ESO version
-#
-#helm repo add external-secrets https://charts.external-secrets.io
-helm repo add external-secrets-operator https://charts.external-secrets.io/
+### Install ESO version
 kubectl create namespace external-secrets
 
-# Install argocd-nodeport-service #use a load balancer for this or istio
-kubectl apply -f - <<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  name: argocd-nodeport-service
-  namespace: argocd
-spec:
-  type: NodePort
-  selector:
-    app.kubernetes.io/name: argocd-server
-  ports:
-  - name: http
-    protocol: TCP
-    port: 80
-    targetPort: 8080
-    nodePort: 30083
-  - name: https
-    protocol: TCP
-    port: 443
-    targetPort: 8080
-    nodePort: 30446
-EOF
+# PLACEHOLDER ArgoCD NODEPORT - Removed to Helm Provider
+kubectl create namespace istio-system
 
-
-kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "$2a$04$mCudBx0tcRzmXDf5uE8hi.7oVW.suKjP8zLsM.FrbKcxhMn3N.XaG", "admin.passwordMtime": "'$(date +%FT%T%Z)'"}}'
-
-###
-### ISTIO INSTALL
-###
+## ISTIO INSTALL
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${istio_version} TARGET_ARCH=x86_64 sh -
 cd istio-*
 export PATH=$PWD/bin:$PATH
 
-# create the Istio config file
+#create the Istio config file
 cat <<EOF > istio-config.yaml
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
@@ -192,36 +155,6 @@ spec:
                 nodePort: 31380
               - port: 443
                 nodePort: 32001
-                name: https
-      - name: istio-private-ingressgateway
-        label:
-          istio: istio-private-ingressgateway
-        enabled: true
-        k8s:
-          service:
-            type: NodePort
-            ports:
-              - port: 80
-                targetPort: 8080
-                name: http2
-                nodePort: 31381
-              - port: 443
-                nodePort: 32002
-                name: https
-      - name: istio-server-ingressgateway
-        label:
-          istio: istio-server-ingressgateway
-        enabled: true
-        k8s:
-          service:
-            type: NodePort
-            ports:
-              - port: 80
-                targetPort: 8080
-                name: http2
-                nodePort: 31382
-              - port: 443
-                nodePort: 32003
                 name: https
   values:
     gateways:

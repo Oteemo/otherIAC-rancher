@@ -1,0 +1,65 @@
+apiVersion: resources.cattle.io/v1
+controllerReferences:
+  - apiVersion: apps/v1
+    name: rancher
+    namespace: cattle-system
+    resource: deployments
+kind: ResourceSet
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"resources.cattle.io/v1","controllerReferences":[{"apiVersion":"apps/v1","name":"rancher","namespace":"cattle-system","resource":"deployments"}],"kind":"ResourceSet","metadata":{"annotations":{},"name":"lts-resource-set"},"resourceSelectors":[{"apiVersion":"v1","kindsRegexp":"^namespaces$","resourceNameRegexp":"^argocd"},{"apiVersion":"v1","kindsRegexp":"^Secret$|^serviceaccounts$","namespaceRegexp":"^argocd"},{"apiVersion":"rbac.authorization.k8s.io/v1","kindsRegexp":"^roles$|^rolebindings$","namespaceRegexp":"^argocd"},{"apiVersion":"rbac.authorization.k8s.io/v1","kindsRegexp":"^clusterrolebindings$","resourceNameRegexp":"^argocd"},{"apiVersion":"rbac.authorization.k8s.io/v1","kindsRegexp":"^clusterroles$","resourceNameRegexp":"^argocd"},{"apiVersion":"argoproj.io/v1alpha1","kindsRegexp":".*","resourceNameRegexp":".*"},{"apiVersion":"v1","kindsRegexp":"^configmaps$","namespaceRegexp":"^argocd"},{"apiVersion":"v1","kindsRegexp":"^secrets$","namespaceRegexp":"^argocd"}]}
+  creationTimestamp: '2023-11-14T19:51:45Z'
+  generation: 2
+  managedFields:
+    - apiVersion: resources.cattle.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:controllerReferences: {}
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:resourceSelectors: {}
+      manager: rancher
+      operation: Update
+      time: '2023-11-14T19:51:45Z'
+  name: lts-resource-set
+  resourceVersion: '8322652'
+  uid: f843fa89-67d1-4e84-bbef-a13cab8701ca
+resourceSelectors:
+  - apiVersion: v1
+    kindsRegexp: ^namespaces$
+    resourceNameRegexp: ^argocd
+  - apiVersion: v1
+    kindsRegexp: ^Secret$|^serviceaccounts$
+    namespaceRegexp: ^argocd
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kindsRegexp: ^roles$|^rolebindings$
+    namespaceRegexp: ^argocd
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kindsRegexp: ^clusterrolebindings$
+    resourceNameRegexp: ^argocd
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kindsRegexp: ^clusterroles$
+    resourceNameRegexp: ^argocd
+  - apiVersion: argoproj.io/v1alpha1
+    kindsRegexp: .*
+    resourceNameRegexp: .*
+  - apiVersion: v1
+    kindsRegexp: ^configmaps$
+    namespaceRegexp: ^argocd
+  - apiVersion: v1
+    kindsRegexp: ^secrets$
+    namespaceRegexp: ^argocd
+  - apiVersion: v1
+    kindsRegexp: ^secrets$
+    namespaceRegexp: ^istio-system
+    resourceNameRegexp: ^httpbin-credential
+  - apiVersion: v1
+    kindsRegexp: ^secrets$
+    namespaceRegexp: ^*
+    resourceNameRegexp: ^aws-secret
+  - apiVersion: v1
+    kindsRegexp: ^namespaces$
+    resourceNameRegexp: ^*
