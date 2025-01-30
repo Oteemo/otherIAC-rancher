@@ -12,15 +12,15 @@ variable "aws_route53_zone_name" {
   type        = string
 }
 
-variable "domain_name" {
-  description = "Domain name in AWS"
-  type        = string 
-}
-
-variable "lb_name" {
-  description = "LB name for A name record"
-  type        = string   
-}
+# variable "domain_name" {
+#   description = "Domain name in AWS"
+#   type        = string 
+# }
+# 
+# variable "lb_name" {
+#   description = "LB name for A name record"
+#   type        = string   
+# }
 
 variable "use_cname" {
   description = "Determines whether to use CNAME record or A/AAAA record"
