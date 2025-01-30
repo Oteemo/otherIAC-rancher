@@ -97,7 +97,7 @@ if test -f "$FILE"; then
 fi
 
 /sbin/service nessusagent start
-/opt/nessus_agent/sbin/nessuscli agent link --key=c5594d6b00c83d4311632819c1671562efb1c20dbf56e261b389bb620c40aeef --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
+/opt/nessus_agent/sbin/nessuscli agent link --key=NESSUS_KEY --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
 # TODO :  Change to use nessus_key
 #/opt/nessus_agent/sbin/nessuscli agent link --key=$(nessus_key) --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
 
