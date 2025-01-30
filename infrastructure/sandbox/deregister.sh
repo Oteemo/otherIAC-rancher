@@ -19,5 +19,24 @@ for instance_id in $instance_ids; do
         --instance-ids "$instance_id"
 done
 
+echo " --> Clearing down ALBs"
+cd alb
+terraform destroy --auto-approve
+sleep 5
+cd ..
+
+echo " --> Clearing down App DNSes"
+cd app-dnses
+terraform destroy --auto-approve
+sleep 5
+cd ..
+
+echo " --> Clearing down Apps "
+cd app-dnses
+terraform destroy --auto-approve
+sleep 5
+cd ..
+
+echo " --> Clearing down Infrastructure"
 # Destroy infrastructure using Terraform
 terraform destroy --auto-approve
