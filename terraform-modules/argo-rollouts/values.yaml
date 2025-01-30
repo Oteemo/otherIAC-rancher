@@ -1,0 +1,12 @@
+#https://artifacthub.io/packages/helm/argo/argo-rollouts/2.32.0
+
+argo-rollouts:
+  dashboard:
+    # -- Deploy dashboard server
+    enabled: true
+
+  logging:
+    level: info
+
+  service:
+    type: ClusterIP
