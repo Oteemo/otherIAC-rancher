@@ -11,7 +11,7 @@ resource "aws_secretsmanager_secret_version" "secret_version" {
 
 resource "random_password" "password" {
   length           = var.password_length
-  special          = true
+  special          = false
   override_special = "!$%&*-_=+<>:?"
 }
 
