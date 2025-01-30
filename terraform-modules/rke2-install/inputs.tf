@@ -15,14 +15,14 @@ data "template_file" "user_data_agent" {
 }
 
 data "template_file" "user_data_server" {
-  template = file("${path.module}/templates/userdata_server_02.sh") #file(var.userdata_server_template_file)
+  template = file("${path.module}/templates/userdata_server-reduced.sh")
 
   vars = {
-    # argocd_version  = var.argocd_version
+
     certmanager_version  = var.certmanager_version
     efs_mount       = var.efs_mount
-    # eso_version     = var.eso_version
     env_prefix      = var.env_prefix
+    environment_name= var.environment_name
     group_id1       = var.group_id1
     group_id2       = var.group_id2
     hostname        = var.hostname
@@ -41,10 +41,8 @@ data "template_file" "other_data_server" {
   template = file("${path.module}/templates/userdata_seed.sh") #file(var.userdata_server_template_file)
 
   vars = {
-    #argocd_version        = var.argocd_version
     certmanager_version   = var.certmanager_version
     efs_mount             = var.efs_mount
-    #eso_version           = var.eso_version
     env_prefix            = var.env_prefix
     group_id1             = var.group_id1
     group_id2             = var.group_id2

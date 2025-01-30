@@ -19,13 +19,14 @@ subscription-manager config --rhsm.manage_repos=1
 ### Get updates, install nfs, install snmp, and apply
 yum -y update
 yum -y install nfs-utils
-yum -y install net-snmp net-snmp-utils net-snmp-libs net-snmp-devel
-
-# Adding pub key for patching
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1R48RInVL/ktexb2i5+1FwlyFyRMjhdAyJtcSYlpG/IX/7yakozJTVMrDiUg957s28ssw0ucdDGS1yTEm1qFKL44svLStodqUimZK/eTnFl74XRQQQJv4AAJsPcc11IDJNVR995T9hpHoDnqCaKl7SY1AYiScIf0M18VXZ7hmFDGp5NJ2BpDVFWaCb5B0dlHd7Lr2RUvvIBqLm4W9dx30r9pjbVcpSrcAiDnF5G8TywAfRjIgilHO/I0xqzwlmGsK2c4qNLOfmuniTB4yKWr2gENVOYwJAauEdQ3kuNTcTJwcEYORSuuSUPGQ3RXtIfFi15OGZs/8oWyTKEi0eRBwwcJEKz+TbgQHlkGOATF8L431c5MSR+NlbHRq50gLFQjDZAj6n2M0ZfmzsvJ9gNfxQnMDzp8zMaSFdVUnOacAL3cd11ZPZqJ8+PYp+qDLrpaZP2LgLnB1mFHHxDvUWDHlBeyI5FXQkhC87MdZNLIow6wUXz+4Y/ZF2OBiCyOMjeOWoRli+NGrs6Ds58A2fjZyV4a5/fMyIxpIEDROBlBlD6mStrvyHyEyGPDUJjqKhKPNXsotEWFHZdbeUfeq4jJ71eiWDgRM1evJD2pPq9QJcS8Bozq6N6dPBX8LgaP6HkwQt6pSMZdUOYDBVQ8aFmZdIlPBan5+lHzWkBXbn+botw==" > /opt/ansible_rw/.ssh/authorized_keys
+yum -y install dnsmasq net-snmp net-snmp-utils net-snmp-libs net-snmp-devel
 
 # Blanking HUIT account key.
 echo "" > /opt/ansible_ro/.ssh/authorized_keys
+echo "" > /opt/ansible_rw/.ssh/authorized_keys
+
+# Adding pub key for patching
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1R48RInVL/ktexb2i5+1FwlyFyRMjhdAyJtcSYlpG/IX/7yakozJTVMrDiUg957s28ssw0ucdDGS1yTEm1qFKL44svLStodqUimZK/eTnFl74XRQQQJv4AAJsPcc11IDJNVR995T9hpHoDnqCaKl7SY1AYiScIf0M18VXZ7hmFDGp5NJ2BpDVFWaCb5B0dlHd7Lr2RUvvIBqLm4W9dx30r9pjbVcpSrcAiDnF5G8TywAfRjIgilHO/I0xqzwlmGsK2c4qNLOfmuniTB4yKWr2gENVOYwJAauEdQ3kuNTcTJwcEYORSuuSUPGQ3RXtIfFi15OGZs/8oWyTKEi0eRBwwcJEKz+TbgQHlkGOATF8L431c5MSR+NlbHRq50gLFQjDZAj6n2M0ZfmzsvJ9gNfxQnMDzp8zMaSFdVUnOacAL3cd11ZPZqJ8+PYp+qDLrpaZP2LgLnB1mFHHxDvUWDHlBeyI5FXQkhC87MdZNLIow6wUXz+4Y/ZF2OBiCyOMjeOWoRli+NGrs6Ds58A2fjZyV4a5/fMyIxpIEDROBlBlD6mStrvyHyEyGPDUJjqKhKPNXsotEWFHZdbeUfeq4jJ71eiWDgRM1evJD2pPq9QJcS8Bozq6N6dPBX8LgaP6HkwQt6pSMZdUOYDBVQ8aFmZdIlPBan5+lHzWkBXbn+botw==" > /opt/ansible_rw/.ssh/authorized_keys
 
 ### Configure SNMP config
 echo "rwcommunity  public
@@ -39,6 +40,44 @@ trapcommunity  public" > /etc/snmp/snmpd.conf
 chmod 600 /etc/snmp/snmpd.conf
 systemctl enable snmpd
 systemctl restart snmpd
+
+### DNSMASQ ###
+#blank dnsmasq config
+echo "" > /etc/dnsmasq.conf 
+
+# write desired dnsmasq config
+echo "domain-needed
+bogus-priv
+interface=lo
+bind-interfaces
+listen-address=127.0.0.1
+cache-size=1000
+resolv-file=/etc/resolv.dnsmasq
+no-poll
+## Can append below two parameters to log host queries
+log-queries
+log-facility=/var/log/dnsmasq.log" >> /etc/dnsmasq.conf 
+
+#cache miss DNS server config
+cat /etc/resolv.conf >> /etc/resolv.dnsmasq
+
+#blank resolv.conf
+echo "" > /etc/resolv.conf
+
+#write dnsmasq conf to resolv.conf
+echo "nameserver 127.0.0.1
+options edns0" >> /etc/resolv.conf
+
+#enable and start dnsmasq service
+systemctl enable --now dnsmasq.service
+
+#logrotate for dnsmasq
+echo "/var/log/dnsmasq.log {
+	rotate 1
+	size 10M
+    copytruncate
+}" >> /etc/logrotate.d/dnsmasq
+
 
 # Add EFS mount point and mount EFS volume. 
 mkdir /docker
@@ -58,15 +97,18 @@ if test -f "$FILE"; then
 fi
 
 /sbin/service nessusagent start
-
 /opt/nessus_agent/sbin/nessuscli agent link --key=c5594d6b00c83d4311632819c1671562efb1c20dbf56e261b389bb620c40aeef --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
+# TODO :  Change to use nessus_key
+#/opt/nessus_agent/sbin/nessuscli agent link --key=$(nessus_key) --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
 
-# up ulimits temporarily and permanently to persist after reboot.
+# Change Server Node Ulimits
 echo "# CHANGES BY LTS
-*                soft    nproc           200000
-*                hard    nproc           200000
-*               hard    nofile          150000
-*               soft    nofile          100000" >>  /etc/security/limits.conf
+      *               soft    nproc           200000
+      *               hard    nproc           200000
+      *               hard    nofile          150000
+      *               soft    nofile          100000" >> /etc/security/limits.conf
+echo "# CHANGES BY LTS
+      fs.file-max = 12760880" >> /etc/sysctl.d/99-sysctl.conf
 
 ### Install RKE2 (rke_version)
 curl -sfL https://get.rke2.io | INSTALL_RKE2_CHANNEL=${rke_version} INSTALL_RKE2_TYPE=server sh -
@@ -94,16 +136,16 @@ kubectl wait --for=condition=Ready nodes --all --timeout=6m
 
 ### Install helm and cert-manager
 curl -#L https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-sleep 10
+sleep 5
 helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
-sleep 10
+sleep 5
 helm repo add jetstack https://charts.jetstack.io
-sleep 10
+sleep 5
 ### New Cert Manager - add certmanager_version
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v${certmanager_version}/cert-manager.crds.yaml
-sleep 10
+sleep 5
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version=v${certmanager_version}
-sleep 10
+sleep 5
 
 ### Add HELM repos
 helm repo add argocd https://argoproj.github.io/argo-helm
@@ -161,7 +203,7 @@ rke2Scheduler:
 EOF
 
 # Get the bootstrap password from Secrets Manager & install Rancher UI with the retrieved password (rancher_version)
-helm upgrade -i rancher rancher-latest/rancher --create-namespace --namespace cattle-system --version ${rancher_version} --set hostname=${hostname} --set bootstrapPassword="${rancher_password}" --set replicas=1
+helm upgrade -i rancher rancher-latest/rancher --create-namespace --namespace cattle-system --version ${rancher_version} --set hostname=${hostname} --set bootstrapPassword="${rancher_password}" --set replicas=3
 
 # Create SSL Certificate Kubernetes Secrets
 aws secretsmanager get-secret-value --region us-east-1 --secret-id ${env_prefix}-ssl-cert --query SecretString --output text|tr -d '"' > /tmp/tls.crt
@@ -170,9 +212,6 @@ kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=/tmp/tls.c
 
 # Update Rancher with SSL Certificate
 helm upgrade -i rancher rancher-latest/rancher --create-namespace --namespace cattle-system --version ${rancher_version} --set hostname=${hostname} --set bootstrapPassword="${rancher_password}" --set ingress.tls.source=secret --set replicas=1
-
-### Install ARGOCD
-kubectl create namespace argocd
 
 ### Install ESO version
 kubectl create namespace external-secrets
@@ -185,35 +224,6 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${istio_version} TARGET_A
 cd istio-*
 export PATH=$PWD/bin:$PATH
 
-##create the Istio config file
-#cat <<EOF > istio-config.yaml
-#apiVersion: install.istio.io/v1alpha1
-#kind: IstioOperator
-#spec:
-#  components:
-#    ingressGateways:
-#      - name: istio-ingressgateway
-#        enabled: true
-#        k8s:
-#          service:
-#            type: NodePort
-#            ports:
-#              - port: 80
-#                targetPort: 8080
-#                name: http2
-#                nodePort: 31380
-#              - port: 443
-#                nodePort: 32001
-#                name: https
-#  values:
-#    gateways:
-#      istio-ingressgateway:
-#        runAsRoot: true
-#        type: NodePort
-#EOF
-#
-#istioctl install -f istio-config.yaml -y
-
 kubectl label namespace default istio-injection=enabled
 #kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/kiali.yaml
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/prometheus.yaml
@@ -221,3 +231,6 @@ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samp
 echo "--------------------------------------------------"
 echo "          DEPLOYMENT COMPLETE"
 echo "--------------------------------------------------"
+
+# Removed IstioOperator
+# Removed ArgoCD creation

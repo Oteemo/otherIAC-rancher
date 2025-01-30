@@ -33,8 +33,29 @@ resource "aws_iam_policy" "ssm_policy" {
 resource "aws_iam_policy" "s3_policy" {
   name        = "S3PolicyForRKE2-${random_integer.random_resource.result}"
   description = "Allow RKE2 servers and agents to access S3 bucket"
-  policy      = templatefile("${path.module}/policies/s3_policy.json.tpl", { aws_s3_bucket = aws_s3_bucket.bucket.id })
-}
+
+      policy      = templatefile("${path.module}/policies/s3_policy.json.tpl",
+        { aws_s3_bucket = aws_s3_bucket.bucket.id , environment = var.environment_name })
+#     policy = jsonencode ({
+#       Version   = "2012-10-17",
+#       Statement = [
+#         {
+#           Effect = "Allow",
+#           Action = [
+#             "s3:ListBucket",
+#             "s3:GetObject",
+#             "s3:PutObject",
+#             "s3:DeleteObject"
+#           ],
+#           Resource = [
+#             for bucket_name in var.s3_list : "arn:aws:s3:::${bucket_name}"
+#             for bucket_name in var.s3_list : "arn:aws:s3:::${bucket_name}/*"
+#           ]
+#         }
+#       ]
+#     }
+#     )
+  }
 
 resource "aws_iam_role" "server_role" {
   name               = "server_role-${random_integer.random_resource.result}"

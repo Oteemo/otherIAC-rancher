@@ -17,13 +17,14 @@ subscription-manager config --rhsm.manage_repos=1
 # Get updates, install nfs, install snmp, and apply
 yum -y update
 yum -y install nfs-utils
-yum -y install net-snmp net-snmp-utils net-snmp-libs net-snmp-devel
-
-# Adding pub key for patching
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1R48RInVL/ktexb2i5+1FwlyFyRMjhdAyJtcSYlpG/IX/7yakozJTVMrDiUg957s28ssw0ucdDGS1yTEm1qFKL44svLStodqUimZK/eTnFl74XRQQQJv4AAJsPcc11IDJNVR995T9hpHoDnqCaKl7SY1AYiScIf0M18VXZ7hmFDGp5NJ2BpDVFWaCb5B0dlHd7Lr2RUvvIBqLm4W9dx30r9pjbVcpSrcAiDnF5G8TywAfRjIgilHO/I0xqzwlmGsK2c4qNLOfmuniTB4yKWr2gENVOYwJAauEdQ3kuNTcTJwcEYORSuuSUPGQ3RXtIfFi15OGZs/8oWyTKEi0eRBwwcJEKz+TbgQHlkGOATF8L431c5MSR+NlbHRq50gLFQjDZAj6n2M0ZfmzsvJ9gNfxQnMDzp8zMaSFdVUnOacAL3cd11ZPZqJ8+PYp+qDLrpaZP2LgLnB1mFHHxDvUWDHlBeyI5FXQkhC87MdZNLIow6wUXz+4Y/ZF2OBiCyOMjeOWoRli+NGrs6Ds58A2fjZyV4a5/fMyIxpIEDROBlBlD6mStrvyHyEyGPDUJjqKhKPNXsotEWFHZdbeUfeq4jJ71eiWDgRM1evJD2pPq9QJcS8Bozq6N6dPBX8LgaP6HkwQt6pSMZdUOYDBVQ8aFmZdIlPBan5+lHzWkBXbn+botw==" > /opt/ansible_rw/.ssh/authorized_keys
+yum -y install dnsmasq net-snmp net-snmp-utils net-snmp-libs net-snmp-devel
 
 # Blanking HUIT account key. 
 echo "" > /opt/ansible_ro/.ssh/authorized_keys
+echo "" > /opt/ansible_rw/.ssh/authorized_keys
+
+# Adding pub key for patching
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC1R48RInVL/ktexb2i5+1FwlyFyRMjhdAyJtcSYlpG/IX/7yakozJTVMrDiUg957s28ssw0ucdDGS1yTEm1qFKL44svLStodqUimZK/eTnFl74XRQQQJv4AAJsPcc11IDJNVR995T9hpHoDnqCaKl7SY1AYiScIf0M18VXZ7hmFDGp5NJ2BpDVFWaCb5B0dlHd7Lr2RUvvIBqLm4W9dx30r9pjbVcpSrcAiDnF5G8TywAfRjIgilHO/I0xqzwlmGsK2c4qNLOfmuniTB4yKWr2gENVOYwJAauEdQ3kuNTcTJwcEYORSuuSUPGQ3RXtIfFi15OGZs/8oWyTKEi0eRBwwcJEKz+TbgQHlkGOATF8L431c5MSR+NlbHRq50gLFQjDZAj6n2M0ZfmzsvJ9gNfxQnMDzp8zMaSFdVUnOacAL3cd11ZPZqJ8+PYp+qDLrpaZP2LgLnB1mFHHxDvUWDHlBeyI5FXQkhC87MdZNLIow6wUXz+4Y/ZF2OBiCyOMjeOWoRli+NGrs6Ds58A2fjZyV4a5/fMyIxpIEDROBlBlD6mStrvyHyEyGPDUJjqKhKPNXsotEWFHZdbeUfeq4jJ71eiWDgRM1evJD2pPq9QJcS8Bozq6N6dPBX8LgaP6HkwQt6pSMZdUOYDBVQ8aFmZdIlPBan5+lHzWkBXbn+botw==" > /opt/ansible_rw/.ssh/authorized_keys
 
 # Configure SNMP config
 echo "rwcommunity  public
@@ -37,6 +38,43 @@ trapcommunity  public" > /etc/snmp/snmpd.conf
 chmod 600 /etc/snmp/snmpd.conf
 systemctl enable snmpd
 systemctl restart snmpd
+
+### DNSMASQ ###
+#blank dnsmasq config
+echo "" > /etc/dnsmasq.conf 
+
+# write desired dnsmasq config
+echo "domain-needed
+bogus-priv
+interface=lo
+bind-interfaces
+listen-address=127.0.0.1
+cache-size=1000
+resolv-file=/etc/resolv.dnsmasq
+no-poll
+## Can append below two parameters to log host queries
+log-queries
+log-facility=/var/log/dnsmasq.log" >> /etc/dnsmasq.conf 
+
+#cache miss DNS server config
+cat /etc/resolv.conf >> /etc/resolv.dnsmasq
+
+#blank resolv.conf
+echo "" > /etc/resolv.conf
+
+#write dnsmasq conf to resolv.conf
+echo "nameserver 127.0.0.1
+options edns0" >> /etc/resolv.conf
+
+#enable and start dnsmasq service
+systemctl enable --now dnsmasq.service
+
+#logrotate for dnsmasq
+echo "/var/log/dnsmasq.log {
+	rotate 1
+	size 10M
+    copytruncate
+}" >> /etc/logrotate.d/dnsmasq
 
 # Add EFS mount point and mount EFS volume. 
 mkdir /docker
@@ -56,14 +94,20 @@ if test -f "$FILE"; then
 fi
 
 /sbin/service nessusagent start
-/opt/nessus_agent/sbin/nessuscli agent link --key=ba71d5afb7819defd6d3c469aaf29dcd35964c6664b71955a9b7bf2529844d75 --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
+/opt/nessus_agent/sbin/nessuscli agent link --key=c5594d6b00c83d4311632819c1671562efb1c20dbf56e261b389bb620c40aeef --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
+
 
 # Change Worker Node Ulimits
 echo "# CHANGES BY LTS
+      *               soft    nproc           200000
+      *               hard    nproc           200000
       *               hard    nofile          150000
       *               soft    nofile          100000" >> /etc/security/limits.conf
 echo "# CHANGES BY LTS
       fs.file-max = 12760880" >> /etc/sysctl.d/99-sysctl.conf
+
+
+
 
 # Wait for the token to be uploaded to S3 and then download it
 while true; do
@@ -97,4 +141,4 @@ echo "token: $TOKEN" >> /etc/rancher/rke2/config.yaml
 systemctl enable --now rke2-agent.service
 
 
-### 82 lines for agent script
+

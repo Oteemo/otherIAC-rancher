@@ -10,9 +10,10 @@ resource "aws_instance" "rke2_agent" {
   }
   iam_instance_profile    = aws_iam_instance_profile.agent.name
   instance_type           = var.instance_type             # Variable for agent instance type
-  metadata_options {
-    http_tokens = "required"
-  }
+  # IMDS scan issue breaks restore
+  #metadata_options {
+  #  http_tokens = "required"
+  #}
   monitoring              = true
   private_ip              = var.agent_private_ips[count.index]
   subnet_id               = var.node_agent_subnet_id
@@ -25,6 +26,7 @@ resource "aws_instance" "rke2_agent" {
     product = "DevSecOps"
     environment = var.environment_name
     Created = formatdate("DD MMM YYYY hh:mm ZZZ", timestamp())
+    criticality = var.criticality
  }
    lifecycle {
     ignore_changes = [
@@ -44,9 +46,10 @@ resource "aws_instance" "rke2_server" {
   ami                  = var.ami_id
   iam_instance_profile = aws_iam_instance_profile.server.name
   instance_type        = var.server_instance_type                  # Variable for agent instance type
-  metadata_options {
-    http_tokens = "required"
-  }
+  # IMDS scan issue breaks restore
+  # metadata_options {
+  #   http_tokens = "required"
+  # }
   monitoring           = true
   private_ip           = var.server_private_ip
   subnet_id            = var.server_subnet_id
@@ -80,9 +83,9 @@ resource "aws_instance" "rke2_other_server" {
   ami                  = var.ami_id
   iam_instance_profile = aws_iam_instance_profile.server.name
   instance_type        = var.server_instance_type
-  metadata_options {
-    http_tokens = "required"
-  }
+#   metadata_options {
+#     http_tokens = "required"
+#   }
   monitoring           = true
   private_ip           = var.server_other_ips[count.index]
   subnet_id              = var.server_subnet_id
@@ -121,7 +124,23 @@ resource "aws_security_group" "allow_vpn_ingress_to_rke" {
     protocol    = "tcp"
     cidr_blocks = ["10.1.79.0/24"]    
   }
-  
+
+  ingress {
+    description = "DNS"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = var.worker_subnets
+  }
+
+  ingress {
+    description = "DNS"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = var.worker_subnets
+  }
+
     ingress {
     description = "Any source that needs to be able to use the Rancher UI or API"
     from_port   = 443
@@ -174,7 +193,7 @@ resource "aws_security_group" "allow_vpn_ingress_to_rke" {
   ingress {
     description = "HTTPS access from ALB to nodes"
     from_port   = 32001
-    to_port     = 32003
+    to_port     = 32004
     protocol    = "tcp"
     cidr_blocks = var.loadbalancer_subnets
   }
@@ -210,7 +229,39 @@ resource "aws_security_group" "allow_vpn_ingress_to_rke" {
     protocol    = "tcp"
     cidr_blocks = var.worker_subnets
   }
-  
+
+  ingress {
+    description = "DNS internal 1"
+    from_port   = 6783
+    to_port     = 6783
+    protocol    = "tcp"
+    cidr_blocks = var.worker_subnets
+  }
+
+  ingress {
+    description = "DNS internal 1"
+    from_port   = 6783
+    to_port     = 6783
+    protocol    = "udp"
+    cidr_blocks = var.loadbalancer_subnets
+  }
+
+  ingress {
+    description = "DNS internal 2"
+    from_port   = 6784
+    to_port     = 6784
+    protocol    = "tcp"
+    cidr_blocks = var.worker_subnets
+  }
+
+  ingress {
+    description = "DNS internal 2"
+    from_port   = 6784
+    to_port     = 6784
+    protocol    = "udp"
+    cidr_blocks = var.loadbalancer_subnets
+  }
+
   ingress {
     description = "RKE2 server needs port 6443 for accessible by other nodes in the cluster"
     from_port   = 6443
@@ -251,6 +302,14 @@ resource "aws_security_group" "allow_vpn_ingress_to_rke" {
     cidr_blocks = var.worker_subnets
   }
 
+   ingress {
+    description = "RKE2 server needs port 9796 for rancher monitoring scraping"
+    from_port   = 9796
+    to_port     = 9796
+    protocol    = "tcp"
+    cidr_blocks = var.worker_subnets
+  } 
+
   ingress {
     description = "Access from Ansible Tower for patching"
     from_port   = 22
@@ -259,7 +318,20 @@ resource "aws_security_group" "allow_vpn_ingress_to_rke" {
     cidr_blocks = var.tower_subnets 
   }
 
-
+  ingress {
+    description = "SNMP access for Logicmonitor"
+    from_port   = 161
+    to_port     = 161
+    protocol    = "tcp"
+    cidr_blocks = var.logicmon_subnets 
+  }
+    ingress {
+    description = "ping access for Logicmonitor"
+    from_port = -1
+    to_port = -1
+    protocol = "icmp"
+    cidr_blocks = var.logicmon_subnets 
+  }
 
   egress {
     from_port        = 0 

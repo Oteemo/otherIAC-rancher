@@ -10,7 +10,9 @@
       ],
       "Resource": [
         "arn:aws:s3:::${aws_s3_bucket}/*",
-        "arn:aws:s3:::${aws_s3_bucket}"
+        "arn:aws:s3:::${aws_s3_bucket}",
+        "arn:aws:s3:::lts-rancher-backup-${environment}/*",
+        "arn:aws:s3:::lts-rancher-backup-${environment}"
       ]
     }
   ]

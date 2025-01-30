@@ -41,9 +41,10 @@ systemctl enable snmpd
 systemctl restart snmpd
 
 # Add EFS mount point and mount EFS volume. 
-mkdir /docker
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport ${efs_mount}:/ docker
-sudo echo "${efs_mount}:/ /docker nfs4  rw    0     0" >> /etc/fstab
+# Removing as it is not needed with PVC/PV's - TMS 10/28/24
+# mkdir /docker
+# sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport ${efs_mount}:/ docker
+# sudo echo "${efs_mount}:/ /docker nfs4  rw    0     0" >> /etc/fstab
 
 # TEMP FIX before PVCs
 groupadd appcommon -g ${group_id1}
@@ -59,7 +60,14 @@ fi
 
 /sbin/service nessusagent start
 
-/opt/nessus_agent/sbin/nessuscli agent link --key=ba71d5afb7819defd6d3c469aaf29dcd35964c6664b71955a9b7bf2529844d75 --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
+/opt/nessus_agent/sbin/nessuscli agent link --key=c5594d6b00c83d4311632819c1671562efb1c20dbf56e261b389bb620c40aeef --host=ns-manager.itsec.harvard.edu --port=8834 --groups=LTS-AWS-Linux --name=$(hostname)
+
+# up ulimits temporarily and permanently to persist after reboot.
+echo "# CHANGES BY LTS
+*                soft    nproc           200000
+*                hard    nproc           200000
+*               hard    nofile          150000
+*               soft    nofile          100000" >>  /etc/security/limits.conf
 
 ### Install RKE2 (rke_version)
 curl -sfL https://get.rke2.io | INSTALL_RKE2_CHANNEL=${rke_version} INSTALL_RKE2_TYPE=server sh -
@@ -108,10 +116,54 @@ helm upgrade --install=true --version=${rancher_backup_version} rancher-backup-c
 helm upgrade --install=true --version=${rancher_backup_version} rancher-backup rancher-charts/rancher-backup -n cattle-resources-system
 
 ### Install Rancher Monitoring
-helm upgrade --install=true --version=${rancher_monitoring_version} --wait=true --timeout=10m0s rancher-monitoring-crd rancher-charts/rancher-monitoring-crd -n cattle-monitoring-system --create-namespace
-helm upgrade --install=true --version=${rancher_monitoring_version} --wait=true --timeout=10m0s rancher-monitoring rancher-charts/rancher-monitoring -n cattle-monitoring-system
+helm upgrade --install=true --version=${rancher_monitoring_version} --wait=true --timeout=10m0s rancher-monitoring-crd rancher-charts/rancher-monitoring-crd -n cattle-monitoring-system --create-namespace -f - <<EOF
+global:
+  cattle:
+    clusterId: local
+    clusterName: local
+    rkePathPrefix: ""
+    rkeWindowsPathPrefix: ""
+    systemDefaultRegistry: ""
+    url: https://${hostname}
+  systemDefaultRegistry: ""
+EOF
 
-# Get the bootstrap password from Secrets Manager
+helm upgrade --install=true --version=${rancher_monitoring_version} --wait=true --timeout=10m0s rancher-monitoring rancher-charts/rancher-monitoring -n cattle-monitoring-system -f - <<EOF
+global:
+  cattle:
+    clusterId: local
+    clusterName: local
+    rkePathPrefix: ""
+    rkeWindowsPathPrefix: ""
+    systemDefaultRegistry: ""
+    url: https://${hostname}
+  systemDefaultRegistry: ""
+prometheus:
+  prometheusSpec:
+    evaluationInterval: 1m
+    retentionSize: 50GiB
+    retention: 15d
+    scrapeInterval: 1m
+grafana:
+  grafana.ini:
+      smtp:
+        enabled: true
+        host: mailhub.harvard.edu:25
+rke2ControllerManager:
+  enabled: true
+rke2Etcd:
+  enabled: true
+rke2IngressNginx:
+  enabled: true
+rke2Proxy:
+  enabled: true
+rke2Scheduler:
+  enabled: true
+EOF
+
+# Get the bootstrap password from Secrets Manager & install Rancher UI with the retrieved password (rancher_version)
+helm upgrade -i rancher rancher-latest/rancher --create-namespace --namespace cattle-system --version ${rancher_version} --set hostname=${hostname} --set bootstrapPassword="${rancher_password}" --set replicas=1
+
 # Install Rancher UI with the retrieved password (rancher_version)
 helm upgrade -i rancher rancher-latest/rancher --create-namespace --namespace cattle-system --version ${rancher_version} --set hostname=${hostname} --set bootstrapPassword="${rancher_password}" --set replicas=1
 

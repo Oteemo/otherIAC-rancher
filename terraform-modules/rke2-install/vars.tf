@@ -14,12 +14,6 @@ variable "ami_id" {
   default     = ""
 }
 
-# Cleanup argocd from user scripts
-#variable "argocd_version" {
-#  description = "argoCD version"
-#  type        = string
-#}
-
 variable "certmanager_version" {
   description = "certmanager version"
   type        = string
@@ -39,12 +33,6 @@ variable "environment_name" {
   description = "Tag for the environment deployment"
   type        = string
 }
-
-#Cleanup ESO version
-#variable "eso_version" {
-#  description = "Eternal Secrets Operator version"
-#  type        = string
-#}
 
 variable "instance_count" {
   description = "Number of RKE2 agent instances to create"
@@ -106,7 +94,6 @@ variable "rancher_monitoring_version" {
   description = "Rancher Monitoring version"
   type        = string
 }
-
 
 variable "rancher_password" {
   description = "Rancher password this is just placeholder for the password. The password will be called from teh module that created it so it is not exposed to the script"
@@ -185,12 +172,7 @@ variable "vpc_id" {
   type = string
 }
 
-#variable "sandbox_subnets" {
-#  description = "subnets per environment"
-#  type = list
-#}
-
-# Rename sandbox_subnet to worker.  TODO :  Remove later
+# Rename sandbox_subnet to worker.
 variable "worker_subnets" {
   description = "subnets per environment"
   type = list
@@ -202,4 +184,23 @@ variable "tower_subnets" {
   type = list
 }
 
+# Logicmonitor subnets.
+variable "logicmon_subnets" {
+  description = "subnets for Logicmonitor"
+  type = list
+}
 
+variable "criticality" {
+  description = "Used to identify the criticality of the resource"
+  type        = string
+}
+
+variable "hosted_by" {
+  description = "Used to identify the hosting group"
+  type        = string
+}
+
+variable "level4" {
+  description = "Used to identify the non/level4 subnet"
+  type        = string
+}
