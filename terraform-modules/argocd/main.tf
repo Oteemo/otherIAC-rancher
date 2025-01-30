@@ -19,6 +19,9 @@ resource "helm_release" "argocd_helm" {
   version           = var.argocd_version
   namespace         = "argocd"
   repository        = "https://argoproj.github.io/argo-helm"
+  Pass version in if required
+  values = [templatefile("${path.module}/values.yaml", { appVersion=var.argocd_version
+  })]
 }
 
 resource "kubectl_manifest" "argocd_nodeport" {
@@ -44,4 +47,5 @@ resource "kubectl_manifest" "argocd_nodeport" {
         targetPort: 8080
         nodePort: 30446
 YAML
+  depends_on = [helm_release.argocd_helm]
 }
