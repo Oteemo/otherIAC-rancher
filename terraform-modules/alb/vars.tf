@@ -14,6 +14,11 @@ variable "certificate_arn" {
   type = string
 }
 
+variable "additional_certs" {
+  description = "Secondary cert arns for ALB"
+  type = list(string)
+}
+
 variable "health_check_interval" {
   description = "Health check interval"
   type        = number
@@ -38,6 +43,13 @@ variable "health_check_timeout" {
   default     = 5
 }
 
+
+variable "internal" {
+  description = "Private or Public Balancer"
+  type        = bool
+  default     = false
+}
+
 variable "healthy_threshold" {
   description = "Healthy threshold"
   type        = number
@@ -49,10 +61,16 @@ variable "ingress_ip" {
   type = list(string)
 }
 
+variable "allowed_subnets" {
+  description = "Ingress IP for ALB"
+  type = list(string)
+}
+ 
+
 variable "lb_name" {
   description = "Load balancer name"
   type        = string
-  default     = "customer alb"
+  default     = "alb-huit"
 }
 
 variable "listener_port" {
@@ -91,8 +109,24 @@ variable "target_group_port" {
   default     = 80
 }
 
+
+variable "target_group_port_https" {
+  description = "Target group port" 
+  type        = number
+  default     = 32001
+}
+
 variable "unhealthy_threshold" {
   description = "Unhealthy threshold"
   type        = number
   default     = 2
 }
+
+variable "additional_tags" {
+  default     = {}
+  description = "Additional resource tags"
+  type        = map(string)
+}
+
+
+
