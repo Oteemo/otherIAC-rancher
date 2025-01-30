@@ -1,0 +1,444 @@
+apiVersion: catalog.cattle.io/v1
+kind: App
+metadata:
+  annotations:
+    objectset.rio.cattle.io/applied: >-
+      H4sIAAAAAAAA/7xXXXPaShL9K1Q/SzICG9uq2odde5N1JbEp481WbZKH1tCCWUYz2pkRCeviv2/1SGDA4BtyufcNSUOf/jh9uucZSvI4Ro+QPQNqbTx6abTjR5P/h4R35BMrTSLQe0WJNGdyDBlMSZUxVhVEB8+Z75psPJnPIIOzeRp1Pkg9/suIhCX/m3/TWBJk4KYJIyWWFKGjZJ4mwsl4bOWcDxUumac/ZctVKNjgrM4pdgvnqYRlBMJSCPhJluQ8lhVkulYqAoU5qTfTMEU3hQwuumKMeHFRYHpFeIl5ej24TBGLC+z1+5f9cfcKe4PLS0Zrg9qOAJr3+xyMIATwSAVZ0oIcZF+eASv5mayTRkMGIfxcGTF74KO3pMiHLwUqRxEIo701SpGFzNuaIphJzQVc1+G4TNeh+jToi/wK07hXiDw+J+zGmF8O4kvR7w76g/w67V7D8tsyAleR4CyKKVrPP7YI9yoSrKqNN+fJRdKFCMbkhJVVExjcjO469+9GndvgWqcwtvOhzslq8uTgcJbnu4aXEcxR1RTKvJmoZ8CikFr6BWTPS8YvsFb+QYf00tAoKRaQwTg8soParV/eqNp5su+kdf5f0k//YZy/D5lWck6anBtakxOjTAmVnw4NZ6Z3PbjoLSNQZvKR5qQgu9gKRRcu3vAxAm3GNCJFwhvbuFlZaaz0ixuFzt23ZQ1MikXjVCys9FKggggsVUoKdJCl/OBMbUWbCieH1swlZ6tJh5Kl9K4pX2ksh3ne7X6SnEJL/63JNV9FVUMGaZepuz7ZCwe52Zwcaazc1Hh/0G7veLuv8rrHbHq8WWbNiXzko7V+0DdNAYcKNa1bNHz5hC7kpH3nvEVPk8XTouIqPlIQKqaaN4rsSqS/PAMVBQkPGdybkZjSuFZ8akaMzhSJrVGUzNYNwtJVNmARmIptMX/g7z8kB7KMfs1kS80qRPYHGI7fsPwtgu/GzqSefDK19reSP575sgoKXztvyo8rOeduDqIQCsrHh2RL6VyT0O6651jxhJPJ7IrdYEv0w5PVqHY4vC0cG121Bn9sm+uWgqis5itpzBWNG11m+6vnlgMrYW7htrv/2F7faO89hO7/AqELQl9beonk3ei9NXW1EsJm2jSf7rSSmj4bVZcvvK+sqXCCnlghQ+UeqjY54cQyAlnihPZLUlUrtdbcu+Le+KElR9o30mac9I3HlibSebtoK3nm5CR23lic0BkLa7VhNwKPEx4Q/WSQpLBXs04G7DbsroEHSb8BPsC2k6Dvp9SuB69k9STYK6tVsLpG7SVp2ozkVnZPAqYLV6l6IvUL0Hr0s+A0K8RjYwFPW94gaO0CYtcIGwFfsx8rkg9rpZqVzK1WUNZBRSs5m6M9UzI/a9+2C8CeXeU0q0h/dxUp8cc/Nc5RKm7osDTsbCfBn1PsJVta9SeP9qOV8CCRTuHp8vW83zf/2GKOzZ7d7Amt+r7MMkZ1ZOdS0F+FYLHdnV17tszYIUS7JgPrtorOx4KvfIFYr+/9CKQuDMNs7+932nlUqiNMWbX7c8EMvaVKmQUPQOh1e+dx9zzupU/d86w/yPrpv5m1+DOntOF7QAadpyl1di4L0nUm5L3Uk864NdTxprMwte20XEy+6q/6yXTElD1zHn3twq7f4v7SPW6D1HtvcOtL2VaF3rgANKU5fLP9HSCrkh5hntmXYO2nxsr/BbKuVHETuJWjRxPWvhduxqtZtzmLwy54AqS/ST2WerINuDP347w99AoOq8ptWb5FKo0e0YG8HZO017YDxUp6u/LHQLTzaG+KRndNT8DBlffbxp2Zt9lVLzyDyVlLaPyedCtOYXV2dVmiDYNoufx/AAAA//9j34o+XBIAAA
+    objectset.rio.cattle.io/id: helm-app
+    objectset.rio.cattle.io/owner-gvk: /v1, Kind=Secret
+    objectset.rio.cattle.io/owner-name: sh.helm.release.v1.csi-driver-nfs.v1
+    objectset.rio.cattle.io/owner-namespace: kube-system
+  creationTimestamp: '2024-04-21T04:36:36Z'
+  generation: 2
+  labels:
+    objectset.rio.cattle.io/hash: 50cdaa55fa18ea7ab19671aaf5a23373d08a2677
+  managedFields:
+    - apiVersion: catalog.cattle.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:objectset.rio.cattle.io/applied: {}
+            f:objectset.rio.cattle.io/id: {}
+            f:objectset.rio.cattle.io/owner-gvk: {}
+            f:objectset.rio.cattle.io/owner-name: {}
+            f:objectset.rio.cattle.io/owner-namespace: {}
+          f:labels:
+            .: {}
+            f:objectset.rio.cattle.io/hash: {}
+          f:ownerReferences:
+            .: {}
+            k:{"uid":"e63cb8a1-2fcb-4ea0-ab76-7c30636b9109"}: {}
+        f:spec:
+          .: {}
+          f:chart:
+            .: {}
+            f:metadata:
+              .: {}
+              f:apiVersion: {}
+              f:appVersion: {}
+              f:description: {}
+              f:name: {}
+              f:version: {}
+            f:values:
+              .: {}
+              f:controller:
+                .: {}
+                f:affinity: {}
+                f:defaultOnDeletePolicy: {}
+                f:dnsPolicy: {}
+                f:livenessProbe:
+                  .: {}
+                  f:healthPort: {}
+                f:logLevel: {}
+                f:name: {}
+                f:nodeSelector: {}
+                f:priorityClassName: {}
+                f:replicas: {}
+                f:resources:
+                  .: {}
+                  f:csiProvisioner:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                  f:csiSnapshotter:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                  f:livenessProbe:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                  f:nfs:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                f:runOnControlPlane: {true}
+                f:runOnMaster: {}
+                f:strategyType: {}
+                f:tolerations: {}
+                f:workingMountDir: {}
+              f:customLabels: {}
+              f:driver:
+                .: {}
+                f:mountPermissions: {}
+                f:name: {}
+              f:externalSnapshotter:
+                .: {}
+                f:controller:
+                  .: {}
+                  f:replicas: {}
+                f:customResourceDefinitions:
+                  .: {}
+                  f:enabled: {}
+                f:enabled: {}
+                f:name: {}
+                f:priorityClassName: {}
+                f:resources:
+                  .: {}
+                  f:limits:
+                    .: {}
+                    f:memory: {}
+                  f:requests:
+                    .: {}
+                    f:cpu: {}
+                    f:memory: {}
+              f:feature:
+                .: {}
+                f:enableFSGroupPolicy: {}
+                f:enableInlineVolume: {}
+                f:propagateHostMountOptions: {}
+              f:image:
+                .: {}
+                f:csiProvisioner:
+                  .: {}
+                  f:pullPolicy: {}
+                  f:repository: {}
+                  f:tag: {}
+                f:csiSnapshotter:
+                  .: {}
+                  f:pullPolicy: {}
+                  f:repository: {}
+                  f:tag: {}
+                f:externalSnapshotter:
+                  .: {}
+                  f:pullPolicy: {}
+                  f:repository: {}
+                  f:tag: {}
+                f:livenessProbe:
+                  .: {}
+                  f:pullPolicy: {}
+                  f:repository: {}
+                  f:tag: {}
+                f:nfs:
+                  .: {}
+                  f:pullPolicy: {}
+                  f:repository: {}
+                  f:tag: {}
+                f:nodeDriverRegistrar:
+                  .: {}
+                  f:pullPolicy: {}
+                  f:repository: {}
+                  f:tag: {}
+              f:imagePullSecrets: {}
+              f:kubeletDir: {}
+              f:node:
+                .: {}
+                f:affinity: {}
+                f:dnsPolicy: {}
+                f:livenessProbe:
+                  .: {}
+                  f:healthPort: {}
+                f:logLevel: {}
+                f:maxUnavailable: {}
+                f:name: {}
+                f:nodeSelector: {}
+                f:priorityClassName: {}
+                f:resources:
+                  .: {}
+                  f:livenessProbe:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                  f:nfs:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                  f:nodeDriverRegistrar:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                f:tolerations: {}
+              f:rbac:
+                .: {}
+                f:create: {}
+                f:name: {}
+              f:serviceAccount:
+                .: {}
+                f:controller: {}
+                f:create: {}
+                f:node: {}
+          f:helmVersion: {}
+          f:info:
+            .: {}
+            f:description: {}
+            f:firstDeployed: {}
+            f:lastDeployed: {}
+            f:notes: {}
+            f:status: {}
+          f:name: {}
+          f:namespace: {}
+          f:resources: {}
+          f:version: {}
+      manager: rancher
+      operation: Update
+      time: '2024-04-20T04:36:41Z'
+    - apiVersion: catalog.cattle.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:status:
+          .: {}
+          f:observedGeneration: {}
+          f:summary:
+            .: {}
+            f:state: {}
+      manager: rancher
+      operation: Update
+      subresource: status
+      time: '2024-04-20T04:36:41Z'
+  name: csi-driver-nfs
+  namespace: kube-system
+  ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: false
+      controller: true
+      kind: Secret
+      name: sh.helm.release.v1.csi-driver-nfs.v1
+  resourceVersion: '2975805'
+spec:
+  chart:
+    metadata:
+      apiVersion: v1
+      appVersion: ${appVersion}
+      description: CSI NFS Driver for Kubernetes
+      name: csi-driver-nfs
+      version: ${appVersion}
+    values:
+      controller:
+        affinity: {}
+        defaultOnDeletePolicy: delete
+        dnsPolicy: ClusterFirstWithHostNet
+        livenessProbe:
+          healthPort: 29652
+        logLevel: 5
+        name: csi-nfs-controller
+        nodeSelector: {}
+        priorityClassName: system-cluster-critical
+        replicas: 1
+        resources:
+          csiProvisioner:
+            limits:
+              memory: 400Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          csiSnapshotter:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          livenessProbe:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          nfs:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+        runOnControlPlane: false
+        runOnMaster: false
+        strategyType: Recreate
+        tolerations:
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/master
+            operator: Exists
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/controlplane
+            operator: Exists
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/control-plane
+            operator: Exists
+        workingMountDir: /tmp
+      customLabels: {}
+      driver:
+        mountPermissions: 0
+        name: nfs.csi.k8s.io
+      externalSnapshotter:
+        controller:
+          replicas: 1
+        customResourceDefinitions:
+          enabled: true
+        enabled: false
+        name: snapshot-controller
+        priorityClassName: system-cluster-critical
+        resources:
+          limits:
+            memory: 300Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+      feature:
+        enableFSGroupPolicy: true
+        enableInlineVolume: false
+        propagateHostMountOptions: false
+      image:
+        csiProvisioner:
+          pullPolicy: IfNotPresent
+          repository: registry.k8s.io/sig-storage/csi-provisioner
+          tag: v3.6.1
+        csiSnapshotter:
+          pullPolicy: IfNotPresent
+          repository: registry.k8s.io/sig-storage/csi-snapshotter
+          tag: v6.3.1
+        externalSnapshotter:
+          pullPolicy: IfNotPresent
+          repository: registry.k8s.io/sig-storage/snapshot-controller
+          tag: v6.3.1
+        livenessProbe:
+          pullPolicy: IfNotPresent
+          repository: registry.k8s.io/sig-storage/livenessprobe
+          tag: v2.11.0
+        nfs:
+          pullPolicy: IfNotPresent
+          repository: registry.k8s.io/sig-storage/nfsplugin
+          tag: ${appVersion}
+        nodeDriverRegistrar:
+          pullPolicy: IfNotPresent
+          repository: registry.k8s.io/sig-storage/csi-node-driver-registrar
+          tag: v2.9.0
+      imagePullSecrets: null
+      kubeletDir: /var/lib/kubelet
+      node:
+        affinity: {}
+        dnsPolicy: ClusterFirstWithHostNet
+        livenessProbe:
+          healthPort: 29653
+        logLevel: 5
+        maxUnavailable: 1
+        name: csi-nfs-node
+        nodeSelector: {}
+        priorityClassName: system-cluster-critical
+        resources:
+          livenessProbe:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          nfs:
+            limits:
+              memory: 300Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          nodeDriverRegistrar:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+        tolerations:
+          - operator: Exists
+      rbac:
+        create: true
+        name: nfs
+      serviceAccount:
+        controller: csi-nfs-controller-sa
+        create: true
+        node: csi-nfs-node-sa
+  helmVersion: 3
+  info:
+    description: Install complete
+    firstDeployed: '2024-04-20T04:36:31Z'
+    lastDeployed: '2024-04-20T04:36:31Z'
+    notes: |2-
+       The CSI NFS Driver is getting deployed to your cluster.
+
+      To check CSI NFS Driver pods status, please run:
+
+        kubectl --namespace=kube-system get pods --selector="app.kubernetes.io/instance=csi-driver-nfs" --watch
+    status: deployed
+  name: csi-driver-nfs
+  namespace: kube-system
+  resources:
+    - apiVersion: v1
+      kind: ServiceAccount
+      name: csi-nfs-controller-sa
+      namespace: kube-system
+    - apiVersion: v1
+      kind: ServiceAccount
+      name: csi-nfs-node-sa
+      namespace: kube-system
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      name: nfs-external-provisioner-role
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      name: nfs-csi-provisioner-binding
+    - apiVersion: apps/v1
+      kind: DaemonSet
+      name: csi-nfs-node
+      namespace: kube-system
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: csi-nfs-controller
+      namespace: kube-system
+    - apiVersion: storage.k8s.io/v1
+      kind: CSIDriver
+      name: nfs.csi.k8s.io
+  version: 1
+status:
+  observedGeneration: 2
+  summary:
+    state: deployed

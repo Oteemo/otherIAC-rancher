@@ -20,6 +20,9 @@ resource "helm_release" "nfs_driver" {
   version           = var.nfs_version
   repository        = "https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts"
 
+  values = [templatefile("${path.module}/values.yaml", { appVersion=var.nfs_version
+  })]
+
   #  # TODO : Workout the depends
   # depends_on = data.kubernetes_cluster_name
 }
