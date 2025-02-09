@@ -1,0 +1,88 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  meshConfig:
+    defaultConfig:
+      holdApplicationUntilProxyStarts : true
+    accessLogFile: /dev/stdout
+    enableTracing: false
+    accessLogEncoding: JSON
+    accessLogFormat: |
+      {
+        "accessLogFormat": "{\"start_time\": \"[%START_TIME%]\",\"duration\": \"%DURATION%\"}"
+      }
+    defaultConfig:
+      holdApplicationUntilProxyStarts: true
+
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: NodePort
+            ports:
+              - port: 80
+                targetPort: 8080
+                name: http2
+                nodePort: 31380
+              - port: 443
+                nodePort: 32001
+                name: https
+      - name: istio-private-ingressgateway
+        enabled: true
+        label:
+          istio: istio-private-ingressgateway
+        k8s:
+          service:
+            type: NodePort
+            ports:
+              - port: 80
+                targetPort: 8080
+                name: http2
+                nodePort: 31381
+              - port: 443
+                nodePort: 32002
+                name: https
+      - name: istio-server-ingressgateway
+        enabled: true
+        label:
+          istio: istio-server-ingressgateway
+        k8s:
+          service:
+            type: NodePort
+            ports:
+              - port: 80
+                targetPort: 8080
+                name: http2
+                nodePort: 31382
+              - port: 443
+                nodePort: 32003
+                name: https
+      - name: istio-apiprivate-ingressgateway
+        label:
+          istio: istio-apiprivate-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: NodePort
+            ports:
+              - port: 80
+                targetPort: 8080
+                name: http2
+                nodePort: 31383
+              - port: 443
+                nodePort: 32004
+                name: https
+  values:
+    gateways:
+      istio-ingressgateway:
+        runAsRoot: true
+        type: NodePort
+      # istio-private-ingressgateway:
+      #   runAsRoot: true
+      #   type: NodePort
+      # istio-server-ingressgateway:
+      #   runAsRoot: true
+      #   type: NodePort
+

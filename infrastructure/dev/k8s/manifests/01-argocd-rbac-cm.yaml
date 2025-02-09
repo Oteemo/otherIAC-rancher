@@ -1,0 +1,53 @@
+apiVersion: v1
+data:
+  policy.csv: |2-
+     g, ext, role:extension
+     g, ext, role:curiosity
+     p, role:curiosity,applications, get, curiosity/* , allow
+     p, role:curiosity, extensions, invoke, cur*, allow
+     g, anm5742, role:admin
+     g, anw822, role:admin
+     g, brd833, role:admin
+     g, brh066, role:admin
+     g, brs025, role:admin
+     g, ctv469, role:admin
+     g, dos763, role:admin
+     g, jaj561, role:admin
+     g, jak852, role:admin
+     g, jcg155, role:admin
+     g, jic012, role:admin
+     g, mac0373, role:admin
+     g, mjv162, role:admin
+     g, kaa563, role:admin
+     g, mac0373, role:admin
+     g, mjv162, role:admin
+     g, php328, role:admin
+     g, rgd358, role:admin
+     g, saj513, role:admin
+     g, sbb741, role:admin
+     g, stc813, role:admin
+     g, tme900, role:admin
+     g, tms424, role:admin
+     g, vac765, role:admin
+     g, kaa563, role:admin
+  policy.default: ""
+  scopes: '[groups]'
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"policy.csv":" g, ext, role:extension\n g, ext, role:curiosity\n p, role:curiosity,applications, get, curiosity/* , allow\n p, role:curiosity, extensions, invoke, cur*, allow\n p, role:extension, applications, get, default/nrs*, allow\n p, role:extension,extensions, invoke, nrs*, allow\n p, role:hk-admin, applications, get, *, allow\n p, role:hk-admin, applications, create, *, allow\n p, role:hk-admin, applications, update, *, allow\n g, anm5742, role:admin\n g, brd833, role:admin\n g, brh066, role:admin\n g, jaj561, role:admin\n g, jak852, role:admin\n g, jic012, role:admin\n g, kaa563, role:admin\n g, mac0373, role:admin\n g, mar1625, role:admin\n g, rgd358, role:admin\n g, saj513, role:admin\n g, sbb471, role:admin\n g, stc813, role:admin\n g, tms424, role:admin"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2023-11-09T19:36:19Z","labels":{"app.kubernetes.io/name":"argocd-rbac-cm","app.kubernetes.io/part-of":"argocd"},"name":"argocd-rbac-cm","namespace":"argocd"}}
+    meta.helm.sh/release-name: argo-cd
+    meta.helm.sh/release-namespace: argocd
+  creationTimestamp: "2023-12-29T20:50:30Z"
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-cd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v2.9.2
+    helm.sh/chart: argo-cd-5.51.4
+  name: argocd-rbac-cm
+  namespace: argocd
+

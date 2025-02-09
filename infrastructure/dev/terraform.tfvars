@@ -1,0 +1,10 @@
+certmanager_version         = "1.15.3"
+hostname                    = "cluster-console.dev.lib.harvard.edu"
+istio_version               = "1.23.4"
+rancher_version             = "2.10.0"
+rancher_backup_version      = "105.0.0+up6.0.0"
+rancher_monitoring_version  = "103.1.1+up45.31.1"
+rke_version                 = "v1.31"
+server_instance_type        = "r6a.xlarge"
+vpc_id                      = "vpc-d53f09b2"
+#First test 04 Feb 25

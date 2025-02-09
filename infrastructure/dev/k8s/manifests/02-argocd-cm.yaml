@@ -1,0 +1,32 @@
+apiVersion: v1
+data:
+  admin.enabled: "true"
+  application.instanceLabelKey: argocd.argoproj.io/instance
+  exec.enabled: "true"
+  oidc.config: |
+    name: HarvardKey
+    issuer: https://www.pin1.harvard.edu/cas/oidc
+    clientID: var.ClientId
+    clientSecret: var.Secret
+  server.rbac.log.enforce.enable: "false"
+  timeout.hard.reconciliation: 0s
+  timeout.reconciliation: 180s
+  url: https://deployment.dev.lib.harvard.edu
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: argo-cd
+    meta.helm.sh/release-namespace: argocd
+  creationTimestamp: "2023-12-29T20:50:30Z"
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-cd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v2.9.2
+    helm.sh/chart: argo-cd-5.51.4
+  name: argocd-cm
+  namespace: argocd
+  resourceVersion: "864461"
+  uid: 5b60bcb9-9737-4313-916a-cdc76d787dca
