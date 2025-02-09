@@ -1,7 +1,7 @@
 # otherIAC-rancher
 otherIAC RKE Rancher 
 
-This is a IAC repo for the RKE/Rancher install onto an AWS instance
+This is a IAC repo for the RKE/Rancher install onto an AWS instance - SJ
 
 ## Table of Contents
 
