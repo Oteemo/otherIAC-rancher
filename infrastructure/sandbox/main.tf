@@ -29,33 +29,31 @@ module "rke2" {
   loadbalancer_subnets			= ["10.140.208.64/26","10.140.208.0/26"]
   alb_sg_id                     = module.alb_istio_public.alb_security_group_id
   ami_id                        = data.aws_ami.latest_patched_ami.id
-  certmanager_version           = "1.15.3"
+  certmanager_version           = var.certmanager_version  # 1.15.5
   criticality                   = "Non-Critical"
   efs_mount                     = "fs-060a9b8f69234eac3.efs.us-east-1.amazonaws.com"  # Change: Add EFS mount name
   env_prefix                    = "sand"
   environment_name              = "Sandbox"
-  group_id1                      = "1636"
-  group_id2                      = "199"
-  hosted_by                      = "LTS"
-  hostname                      = "cluster-console.sand.lib.harvard.edu"      # Change: Add console DNS name
+  group_id1                     = "1636"
+  group_id2                     = "199"
+  hosted_by                     = "LTS"
+  hostname                      = var.hostname                          #cluster-console.sand.lib.harvard.edu"
   instance_count                = 2
   instance_type                 = "c5.2xlarge"
   key_pair_name_prefix          = "HarvardLTS-oteemo"
-  istio_version                 = "1.23.4"
+  istio_version                 = var.istio_version
   level4                        = "nonlevel4"
   loki_version                  = "2.9.11"
-  node_agent_subnet_id          = "subnet-0eab0ba64ee10f51f"                  # Change: Agents subnet id
-  rancher_backup_version        = "105.0.0+up6.0.0"
-  #rancher_backup_version        = "103.0.2+up4.0.2"
-  #rancher_monitoring_version    = "105.1.0+up61.3.2"
-  rancher_monitoring_version    = "103.1.1+up45.31.1"
+  node_agent_subnet_id          = "subnet-0eab0ba64ee10f51f"
+  rancher_backup_version        = var.rancher_backup_version                # 105.0.0+up6.0.0
+  rancher_monitoring_version    = var.rancher_monitoring_version            # 103.1.1+up45.31.1
   rancher_password              = data.aws_secretsmanager_secret_version.rancher_password.secret_string
-  rancher_version               = "2.10.0"
-  rke_version                   = "v1.31"
+  rancher_version               = var.rancher_version       # 2.10.2
+  rke_version                   = var.rke_version           # v.31
   rsa_bits                      = 4096
   s3_bucket_name                = "harvard-lts-oteemo-node"
   server_instance_count         = 0                                             # Change: server count
-  server_instance_type          = "r6a.xlarge"        # 4 CPU 32 GB Mem
+  server_instance_type          = var.server_instance_type  # r6a.xlarge"
   server_other_ips              = ["10.140.210.73"]                             # Change: Other server IPs
   server_private_ip             = "10.140.210.69"                               # Change: Add server IPs
   server_subnet_id              = "subnet-0f0741730943f0743"
@@ -64,21 +62,21 @@ module "rke2" {
   userdata_server_template_file = "templates/userdata_server.sh"
   volume_size                   = 100
   volume_type                   = "gp3"
-  vpc_id                        = "vpc-0d1a887bbc1aef59d"                       # Change: VPC
+  vpc_id                        = var.vpc_id                       # Change: VPC
   worker_subnets				= ["10.140.210.64/26","10.140.210.0/26","10.1.79.0/24"]
   tower_subnets                 = ["10.137.242.0/25"]
   logicmon_subnets              = ["10.34.64.128/26", "10.137.242.0/26", "10.34.64.64/26"]
 }
 
 module "alb_istio_public" {
-  alb_vpc_id            = "vpc-0d1a887bbc1aef59d"
+  alb_vpc_id            = var.vpc_id
   alb_subnet_id         = ["subnet-0430ccd74062f252d", "subnet-00c239cfa0a160dfe"]
   allowed_subnets       = ["128.103.24.79/32","128.103.224.79/32","10.1.79.0/24","10.140.210.0/24", "10.140.210.6/32", "10.140.210.7/32", "10.140.210.69/32"]
   ingress_ip            = ["10.140.210.69", "10.140.210.6", "10.140.210.7"]     # Change: Add server and worker IPs
   health_check_path     = "/productpage"
-  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/4586074f-cd68-4ed3-b9c8-4bcd5576903e"
+  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/2f91f81c-41dc-4916-a930-98aaac463151"
   security_group_name   = "sb_alb_sg"
-  additional_certs      = []                      #TF is ok with empty variables. Just skips it. 
+  additional_certs      = []                      #TF is ok with empty variables. Just skips it.
   lb_name               = "istiolb"
   listener_port         = 80
   listener_protocol     = "HTTP"
@@ -96,14 +94,14 @@ module "alb_istio_public" {
 }
 
 module "alb_istio_server" {
-  alb_vpc_id            = "vpc-0d1a887bbc1aef59d"
+  alb_vpc_id            = var.vpc_id
   alb_subnet_id         = ["subnet-0430ccd74062f252d", "subnet-00c239cfa0a160dfe"]
   allowed_subnets       = ["128.103.24.79/32","128.103.224.79/32","10.1.79.0/24"]
   ingress_ip            = ["10.140.210.69", "10.140.210.6", "10.140.210.7"]     # Change: Add server and worker IPs
   health_check_path     = "/"
-  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/4586074f-cd68-4ed3-b9c8-4bcd5576903e"
+  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/a4134b83-712a-4c2c-93ae-652cfd993177"
   security_group_name   = "sb_alb_sg_srv"
-  additional_certs      = []                     
+  additional_certs      = []
   lb_name               = "istiolb-server"
   listener_port         = 80
   listener_protocol     = "HTTP"
@@ -123,13 +121,13 @@ module "alb_istio_server" {
 
 module "alb_istio_private" {
   alb_subnet_id         = ["subnet-0430ccd74062f252d", "subnet-00c239cfa0a160dfe"]
-  alb_vpc_id            = "vpc-0d1a887bbc1aef59d"
+  alb_vpc_id            = var.vpc_id
   allowed_subnets       = ["128.103.24.79/32","128.103.224.79/32","10.1.79.0/24","10.140.210.0/24","10.140.210.6/32", "10.140.210.7/32", "10.140.210.69/32"]
   ingress_ip            = ["10.140.210.69", "10.140.210.6", "10.140.210.7"]     # Change: Add server and worker IPs
   health_check_path     = "/"
-  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/4586074f-cd68-4ed3-b9c8-4bcd5576903e"
+  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/a4134b83-712a-4c2c-93ae-652cfd993177"
   security_group_name   = "sb_alb_sg_priv"
-  additional_certs      = []                     
+  additional_certs      = []
   lb_name               = "istiolb-private"
   listener_port         = 80
   listener_protocol     = "HTTP"
@@ -149,9 +147,9 @@ module "alb_istio_private" {
 
 module "alb_console" {
   alb_subnet_id         = ["subnet-0430ccd74062f252d", "subnet-00c239cfa0a160dfe"]
-  alb_vpc_id            = "vpc-0d1a887bbc1aef59d"
+  alb_vpc_id            = var.vpc_id
   allowed_subnets       =  ["128.103.24.79/32","128.103.224.79/32","10.1.79.0/24"]
-  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/4586074f-cd68-4ed3-b9c8-4bcd5576903e"
+  certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/a4134b83-712a-4c2c-93ae-652cfd993177"
   additional_certs      = []
   health_check_interval = 30
   health_check_path       = "/"
@@ -173,7 +171,7 @@ module "alb_console" {
 
 module "alb_deployment" {
   alb_subnet_id         = ["subnet-0430ccd74062f252d", "subnet-00c239cfa0a160dfe"]
-  alb_vpc_id            = "vpc-0d1a887bbc1aef59d"
+  alb_vpc_id            = var.vpc_id
   allowed_subnets       =  ["128.103.24.79/32","128.103.224.79/32","10.1.79.0/24"]
   certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/da5fecdd-3c2a-4db4-8e7e-02efc9133b36"
   additional_certs        = []
@@ -197,7 +195,7 @@ module "alb_deployment" {
 
 module "alb_logging" {
   alb_subnet_id         = ["subnet-0430ccd74062f252d", "subnet-00c239cfa0a160dfe"] # 10.140.208.64/26  10.140.208.0/26 add the env subnets
-  alb_vpc_id            = "vpc-0d1a887bbc1aef59d"
+  alb_vpc_id            = var.vpc_id
   allowed_subnets       =  ["128.103.24.79/32","128.103.224.79/32","10.1.79.0/24"]
   certificate_arn       = "arn:aws:acm:us-east-1:086178843174:certificate/5c1e2162-a70c-413c-aa3f-01efbc04a7ed"
   additional_certs      = []   
